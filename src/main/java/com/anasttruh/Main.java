@@ -1,17 +1,48 @@
 package com.anasttruh;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+/**
+ * Главный класс приложения Laba1
+ * Демонстрация: логирование + работа с JSON
+ */
+public class Main {
+
+    // Инициализация логгера (вместо System.out)
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    public static void main(String[] args) {
+        logger.info("🚀 Запуск приложения Laba1...");
+
+        // Создаём объект User
+        User user = new User(1, "Anastasia", "anasttruh@example.com");
+        logger.info("📦 Создан объект: {}", user);
+
+        // Сериализация в JSON
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(user);
+            logger.info("✅ Сериализация в JSON: {}", json);
+
+            // Десериализация из JSON
+            User restoredUser = mapper.readValue(json, User.class);
+            logger.info("✅ Десериализация из JSON: {}", restoredUser);
+
+            // Проверка целостности данных
+            if (user.getId() == restoredUser.getId() &&
+                    user.getName().equals(restoredUser.getName())) {
+                logger.info("✔️ Данные совпадают после сериализации/десериализации");
+            } else {
+                logger.warn("⚠️ Данные не совпадают!");
+            }
+
+        } catch (JsonProcessingException e) {
+            logger.error("❌ Ошибка работы с JSON: {}", e.getMessage(), e);
         }
+
+        logger.info("🏁 Приложение завершено успешно.");
     }
 }
